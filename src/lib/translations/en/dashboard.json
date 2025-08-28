@@ -1,0 +1,8 @@
+{
+  "title": "Dashboard",
+  "totalUsers": "Total Users",
+  "fireDetected": "Fire Detected",
+  "humansDetected": "Humans Detected",
+  "greeting_day": "Hello",
+  "greeting_night": "Good Night"
+} 
