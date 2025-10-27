@@ -33,14 +33,14 @@
 </svelte:head>
 
 {#if $loading}
-	<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+	<div class="flex min-h-screen items-center justify-center bg-[#f3f4f6]">
 		<div class="text-center">
-			<div class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-slate-900"></div>
+			<div class="ui-loading-spinner mx-auto mb-4"></div>
 			<p class="ui-text-tertiary">{$t('common.loading')}</p>
 		</div>
 	</div>
 {:else if $user}
-	<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+	<div class="flex min-h-screen items-center justify-center bg-[#f3f4f6]">
 		<p class="ui-text-tertiary text-sm">{$t('common.loading')}</p>
 	</div>
 {:else}

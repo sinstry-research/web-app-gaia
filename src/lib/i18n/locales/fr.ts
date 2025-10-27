@@ -36,7 +36,7 @@ const fr = {
 		humidity: 'Humidité foliaire',
 		temperature: 'Température du sol',
 		windSpeed: 'Vent au couvert',
-		airQuality: 'Indice NDVI',
+		airQuality: 'Indice qualite de l\'air',
 		lastUpdated: 'Actualisé'
 	},
 	equipments: {
@@ -120,7 +120,7 @@ const fr = {
 		placeholderTag: 'Mode demonstration',
 		mapPlaceholder: {
 			label: 'Apercu de la carte',
-			description: 'Connectez des capteurs ou des images pour afficher les couches NDVI, humidite et stress.'
+			description: 'Connectez des capteurs ou des images pour afficher les couches d\'humidite et de stress.'
 		},
 		legend: {
 			title: 'Legende',

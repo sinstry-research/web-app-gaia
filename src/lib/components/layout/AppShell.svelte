@@ -94,9 +94,9 @@
 </script>
 
 {#if $loading}
-	<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+	<div class="flex min-h-screen items-center justify-center bg-[#f3f4f6]">
 		<div class="text-center">
-			<div class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-slate-900"></div>
+			<div class="ui-loading-spinner mx-auto mb-4"></div>
 			<p class="ui-text-tertiary">{$t('common.loading')}</p>
 		</div>
 	</div>
@@ -137,7 +137,7 @@
 			</nav>
 		</aside>
 		<main
-			class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4"
+			class="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-24 md:pb-4"
 			on:touchstart|passive={handleTouchStart}
 			on:touchend={handleTouchEnd}
 			on:touchcancel={handleTouchCancel}

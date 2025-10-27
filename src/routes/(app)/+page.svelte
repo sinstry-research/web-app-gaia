@@ -184,10 +184,10 @@
 		{
 			icon: Leaf,
 			label: $t('dashboard.airQuality'),
-			value: '0.79 NDVI',
-			fill: 79,
+			value: '42 AQI',
+			fill: 42,
 			color: '#16a34a',
-			caption: 'Healthy vegetation'
+			caption: 'Good air quality'
 		}
 	];
 

@@ -36,7 +36,7 @@ const en = {
 		humidity: 'Leaf moisture',
 		temperature: 'Soil temperature',
 		windSpeed: 'Canopy wind speed',
-		airQuality: 'NDVI index',
+		airQuality: 'Air quality index',
 		lastUpdated: 'Updated'
 	},
 	equipments: {
@@ -120,7 +120,7 @@ const en = {
 		placeholderTag: 'Preview mode',
 		mapPlaceholder: {
 			label: 'Health map placeholder',
-			description: 'Connect sensors or imagery sources to display NDVI, soil moisture and stress overlays.'
+			description: 'Connect sensors or imagery sources to display soil moisture and stress overlays.'
 		},
 		legend: {
 			title: 'Legend',

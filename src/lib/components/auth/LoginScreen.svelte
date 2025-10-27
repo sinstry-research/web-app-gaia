@@ -19,7 +19,7 @@
 	};
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4">
+<div class="flex min-h-screen items-center justify-center bg-[#f3f4f6] p-4">
 	<div class="w-full max-w-md space-y-8">
 		<div class="text-center">
 			<div class="mx-auto mb-6 flex h-24 w-24 items-center justify-center">
