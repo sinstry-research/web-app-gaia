@@ -135,7 +135,7 @@
 		</aside>
 		<main
 			class="flex-1 overflow-y-auto p-4 pb-24 md:pb-4"
-			on:touchstart={handleTouchStart}
+			on:touchstart|passive={handleTouchStart}
 			on:touchend={handleTouchEnd}
 			on:touchcancel={handleTouchCancel}
 		>

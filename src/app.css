@@ -215,7 +215,7 @@ textarea:focus {
 
 	.ui-nav-item:hover,
 	.ui-nav-item.is-active {
-		background-color: var(--ui-surface-subtle);
+		background-color: rgba(0, 0, 0, 0.05);
 	}
 
 	.ui-nav-item:focus-visible {
