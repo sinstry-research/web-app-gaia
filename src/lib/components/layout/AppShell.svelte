@@ -17,6 +17,7 @@
 	let touchStartY = 0;
 	let touchStartTime = 0;
 	let trackingSwipe = false;
+	let currentRouteKey: RouteKey = '/';
 
 	type RouteKey = (typeof navOrder)[number];
 
@@ -88,6 +89,8 @@
 	const handleTouchCancel = () => {
 		trackingSwipe = false;
 	};
+
+	$: currentRouteKey = resolveRouteKey($page.url.pathname);
 </script>
 
 {#if $loading}
@@ -108,20 +111,20 @@
 				<ul
 					class="flex h-full w-full flex-row items-center gap-x-2 px-2 md:flex-col md:justify-start md:gap-x-0 md:gap-y-2 md:px-0"
 				>
-					<NavItem href="/" label={$t('common.home')} active={$page.url.pathname === '/'}>
+					<NavItem href="/" label={$t('common.home')} active={currentRouteKey === '/'}>
 						<img src="/icon-black.svg" alt={$t('common.home')} class="h-6 w-6 flex-shrink-0" />
 					</NavItem>
 					<NavItem
 						href="/parcel-health"
 						label={$t('common.parcelHealth')}
-						active={$page.url.pathname.startsWith('/parcel-health')}
+						active={currentRouteKey === '/parcel-health'}
 					>
 						<MapIcon class="h-6 w-6 flex-shrink-0" />
 					</NavItem>
-					<NavItem href="/equipments" label={$t('common.equipments')} active={$page.url.pathname === '/equipments'}>
+					<NavItem href="/equipments" label={$t('common.equipments')} active={currentRouteKey === '/equipments'}>
 						<img src="/equipment.svg" alt={$t('common.equipments')} class="h-6 w-6 flex-shrink-0" />
 					</NavItem>
-					<NavItem href="/settings" align="end" label={$t('common.settings')} active={$page.url.pathname === '/settings'}>
+					<NavItem href="/settings" align="end" label={$t('common.settings')} active={currentRouteKey === '/settings'}>
 						{#if $user?.photoURL}
 							<img src={$user.photoURL} alt={$t('common.settings')} class="h-6 w-6 flex-shrink-0 rounded-full" />
 						{:else}
