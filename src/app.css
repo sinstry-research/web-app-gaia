@@ -206,7 +206,7 @@ textarea:focus {
 	}
 
 	.ui-nav-item {
-		@apply flex flex-1 justify-center rounded-md transition-colors duration-300;
+		@apply flex flex-1 justify-center rounded-full md:rounded-lg transition-colors duration-300;
 		background-color: transparent;
 		transition-property: background-color, transform;
 		transition-duration: 150ms;

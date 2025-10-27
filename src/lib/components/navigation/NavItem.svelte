@@ -11,7 +11,7 @@
 >
 	<a
 		href={href}
-		class="flex h-12 w-12 items-center justify-center"
+		class="flex h-12 w-12 items-center justify-center rounded-full"
 		aria-current={active ? 'page' : undefined}
 		aria-label={label}
 	>

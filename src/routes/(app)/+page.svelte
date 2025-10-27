@@ -240,7 +240,7 @@
 		</div>
 		<div class="ui-panel flex flex-col gap-4 p-6">
 			<p class="ui-title">{$t('dashboard.environmentReadings')}</p>
-			<div class="grid gap-4 sm:grid-cols-3">
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 				{#each heroMetrics as metric}
 					<div class="rounded-xl border ui-border-subtle ui-surface-base p-4">
 						<p class="text-xs font-medium uppercase tracking-wide ui-text-subtle">{metric.label}</p>
@@ -262,7 +262,7 @@
 		</div>
 	</section>
 
-	<section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+	<section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
 		{#each quickStats as stat}
 			<StatCard
 				icon={stat.icon}
@@ -277,7 +277,7 @@
 		{/each}
 	</section>
 
-	<section class="grid gap-4 lg:grid-cols-[2fr,1fr]">
+	<section class="grid grid-cols-1 gap-4 lg:grid-cols-[2fr,1fr]">
 		<div class="ui-panel p-6">
 			<div class="flex items-center justify-between">
 				<div>
@@ -332,7 +332,7 @@
 		</div>
 	</section>
 
-	<section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+	<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
 		{#each environmentReadings as reading}
 			<div class="ui-panel p-5">
 				<div class="flex items-center justify-between">

@@ -45,7 +45,7 @@
 	$: hasValue = value !== undefined && value !== null && value !== '';
 </script>
 
-<div class={`ui-card h-full p-6 ${layoutClasses} ${cardClass}`}>
+<div class={`ui-card h-full w-full p-6 ${layoutClasses} ${cardClass}`}>
 	{#if icon || iconSrc}
 		<div class={`text-white ${iconWrapperClasses}`} style={`background-color: ${backgroundColor}`}>
 			{#if icon}

@@ -19,7 +19,7 @@
 {:else}
 	<div class="flex h-screen">
 		<aside
-			class="ui-surface-overlay ui-border-soft ui-shadow-soft ui-text-primary fixed bottom-4 left-4 right-4 flex h-16 flex-col rounded-lg border text-sm md:static md:m-4 md:h-auto md:w-16"
+			class="ui-surface-overlay ui-border-soft ui-shadow-soft ui-text-primary fixed bottom-4 left-4 right-4 z-30 flex h-16 flex-col rounded-full border text-sm md:static md:m-4 md:h-auto md:w-16 md:rounded-lg"
 		>
 			<nav class="flex-1">
 				<ul
