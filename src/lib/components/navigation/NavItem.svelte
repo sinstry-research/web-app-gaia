@@ -6,7 +6,7 @@
 </script>
 
 <li
-	class={`ui-nav-item md:w-14 md:flex-none md:mx-2 ${align === 'end' ? 'md:mt-auto md:mb-2' : 'md:mt-2'}`}
+	class={`ui-nav-item md:w-12 md:mx-auto md:flex-none ${align === 'end' ? 'md:mt-auto' : ''}`}
 	class:is-active={active}
 >
 	<a

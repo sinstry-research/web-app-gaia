@@ -105,11 +105,11 @@
 {:else}
 	<div class="flex h-screen">
 		<aside
-			class="ui-surface-overlay ui-border-soft ui-shadow-soft ui-text-primary fixed bottom-4 left-4 right-4 z-30 flex h-16 flex-col rounded-full border text-sm md:static md:m-4 md:h-auto md:w-16 md:rounded-lg"
+			class="ui-surface-overlay ui-border-soft ui-text-primary fixed bottom-4 left-4 right-4 z-30 flex h-16 flex-col rounded-full border text-sm md:static md:m-2 md:h-auto md:w-16 md:rounded-lg"
 		>
 			<nav class="flex-1">
 				<ul
-					class="flex h-full w-full flex-row items-center gap-x-2 px-2 md:flex-col md:justify-start md:gap-x-0 md:gap-y-2 md:px-0"
+					class="flex h-full w-full flex-row items-center gap-x-2 px-2 md:flex-col md:items-stretch md:gap-x-0 md:gap-y-2 md:px-0 md:py-2"
 				>
 					<NavItem href="/" label={$t('common.home')} active={currentRouteKey === '/'}>
 						<img src="/icon-black.svg" alt={$t('common.home')} class="h-6 w-6 flex-shrink-0" />
@@ -137,7 +137,7 @@
 			</nav>
 		</aside>
 		<main
-			class="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-24 md:pb-4"
+			class="flex-1 overflow-y-auto overflow-x-hidden pt-4 pr-4 pb-24 pl-4 md:pb-4 md:pl-2"
 			on:touchstart|passive={handleTouchStart}
 			on:touchend={handleTouchEnd}
 			on:touchcancel={handleTouchCancel}
