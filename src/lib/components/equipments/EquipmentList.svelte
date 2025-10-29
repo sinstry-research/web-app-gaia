@@ -17,16 +17,21 @@
 	import { formatDate } from '$lib/domain/equipments/utils';
 	import { t } from '$lib/i18n';
 
-	export let equipments: Equipment[] = [];
-	export let filter: FilterKey = 'all';
-	export let locale = 'en';
+	interface Props {
+		equipments?: Equipment[];
+		filter?: FilterKey;
+		locale?: string;
+	}
 
-	$: emptyMessage =
+	const { equipments = [], filter = 'all', locale = 'en' }: Props = $props();
+
+	const emptyMessage = $derived(
 		filter === 'drone'
 			? $t('equipments.empty.drones')
 			: filter === 'camera'
 				? $t('equipments.empty.cameras')
-				: $t('equipments.empty.all');
+				: $t('equipments.empty.all')
+	);
 </script>
 
 {#if equipments.length === 0}

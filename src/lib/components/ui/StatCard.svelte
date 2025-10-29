@@ -4,17 +4,33 @@
 	type Orientation = 'horizontal' | 'vertical';
 	type Tone = 'neutral' | 'positive' | 'negative';
 
-	export let title: string;
-	export let icon: ComponentType | undefined = undefined;
-	export let iconSrc: string | undefined = undefined;
-	export let color: string = 'slate';
-	export let value: string | number | undefined = undefined;
-	export let cardClass: string = '';
-	export let orientation: Orientation = 'horizontal';
-	export let description: string | undefined = undefined;
-	export let change: string | undefined = undefined;
-	export let changeTone: Tone = 'neutral';
-	export let iconSize = 24;
+	interface Props {
+		title: string;
+		icon?: ComponentType;
+		iconSrc?: string;
+		color?: string;
+		value?: string | number;
+		cardClass?: string;
+		orientation?: Orientation;
+		description?: string;
+		change?: string;
+		changeTone?: Tone;
+		iconSize?: number;
+	}
+
+	const {
+		title,
+		icon = undefined,
+		iconSrc = undefined,
+		color = 'slate',
+		value = undefined,
+		cardClass = '',
+		orientation = 'horizontal',
+		description = undefined,
+		change = undefined,
+		changeTone = 'neutral',
+		iconSize = 24
+	}: Props = $props();
 
 	const toneClasses: Record<Tone, string> = {
 		positive: 'text-emerald-600',
@@ -33,23 +49,31 @@
 		sky: '#0ea5e9'
 	};
 
-	$: isSunMoonIcon = iconSrc && (iconSrc.includes('sun.svg') || iconSrc.includes('moon.svg'));
-	$: backgroundColor = isSunMoonIcon ? 'transparent' : backgroundColors[color] ?? backgroundColors.slate;
-	$: layoutClasses = orientation === 'vertical' ? 'flex flex-col gap-4' : 'flex items-center gap-4';
-	$: iconWrapperClasses =
+	const isSunMoonIcon = $derived(iconSrc && (iconSrc.includes('sun.svg') || iconSrc.includes('moon.svg')));
+	const backgroundColor = $derived(
+		isSunMoonIcon ? 'transparent' : backgroundColors[color] ?? backgroundColors.slate
+	);
+	const layoutClasses = $derived(
+		orientation === 'vertical' ? 'flex flex-col gap-4' : 'flex items-center gap-4'
+	);
+	const iconWrapperClasses = $derived(
 		orientation === 'vertical'
 			? 'flex h-10 w-10 items-center justify-center rounded-full'
-			: 'flex h-12 w-12 items-center justify-center rounded-full';
-	$: iconImageClasses = orientation === 'vertical' ? 'h-10 w-10 object-contain' : 'h-12 w-12 object-contain';
-	$: contentClasses = orientation === 'vertical' ? 'space-y-2' : 'flex-1 space-y-2';
-	$: hasValue = value !== undefined && value !== null && value !== '';
+			: 'flex h-12 w-12 items-center justify-center rounded-full'
+	);
+	const iconImageClasses = $derived(
+		orientation === 'vertical' ? 'h-10 w-10 object-contain' : 'h-12 w-12 object-contain'
+	);
+	const contentClasses = $derived(orientation === 'vertical' ? 'space-y-2' : 'flex-1 space-y-2');
+	const hasValue = $derived(value !== undefined && value !== null && value !== '');
 </script>
 
 <div class={`ui-card h-full w-full p-6 ${layoutClasses} ${cardClass}`}>
 	{#if icon || iconSrc}
 		<div class={`text-white ${iconWrapperClasses}`} style={`background-color: ${backgroundColor}`}>
 			{#if icon}
-				<svelte:component this={icon} size={iconSize} />
+				{@const Icon = icon}
+				<Icon size={iconSize} />
 			{:else if iconSrc}
 				<img src={iconSrc} alt="" class={iconImageClasses} />
 			{/if}

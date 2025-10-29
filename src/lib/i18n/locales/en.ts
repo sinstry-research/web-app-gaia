@@ -16,7 +16,7 @@ const en = {
 		copyright: '(c) 2024 GAIA. All rights reserved.'
 	},
 	dashboard: {
-		title: 'Operations dashboard',
+		title: 'Dashboard',
 		overview: 'Field overview',
 		totalUsers: 'Producers onboarded',
 		fireDetected: 'Fire alerts (24h)',

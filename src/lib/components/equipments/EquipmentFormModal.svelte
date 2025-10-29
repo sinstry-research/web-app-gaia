@@ -19,29 +19,34 @@
 
 	const dispatch = createEventDispatcher<EquipmentFormModalEvents>();
 
-export let open = false;
-export let initialForm: EquipmentForm = getDefaultForm();
-
-let form: EquipmentForm = { ...initialForm };
-let errorMessage = '';
-let modalOverlay: HTMLDivElement | null = null;
-let wasOpen = false;
-
-$: isDroneForm = form.type === 'drone';
-
-const inputClasses =
-	'mt-2 block w-full rounded-xl border ui-border-subtle px-4 py-2.5 text-sm ui-text-secondary focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300';
-
-	$: if (open && !wasOpen) {
-		form = { ...initialForm };
-		errorMessage = '';
-		(async () => {
-			await tick();
-			modalOverlay?.focus();
-		})();
+	interface Props {
+		open?: boolean;
+		initialForm?: EquipmentForm;
 	}
 
-	$: wasOpen = open;
+	const { open = false, initialForm = getDefaultForm() }: Props = $props();
+
+	let form = $state<EquipmentForm>({ ...initialForm });
+	let errorMessage = $state('');
+	let modalOverlay = $state<HTMLDivElement | null>(null);
+	let wasOpen = false;
+
+	const isDroneForm = $derived(form.type === 'drone');
+
+	const inputClasses =
+		'mt-2 block w-full rounded-xl border ui-border-subtle px-4 py-2.5 text-sm ui-text-secondary focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300';
+
+	$effect(() => {
+		if (open && !wasOpen) {
+			form = { ...initialForm };
+			errorMessage = '';
+			(async () => {
+				await tick();
+				modalOverlay?.focus();
+			})();
+		}
+		wasOpen = open;
+	});
 
 	const closeModal = () => {
 		dispatch('close');
@@ -95,8 +100,12 @@ const inputClasses =
 		aria-modal="true"
 		tabindex="-1"
 		bind:this={modalOverlay}
-		on:click|self={closeModal}
-		on:keydown={(event) => {
+		onclick={(event) => {
+			if (event.target === event.currentTarget) {
+				closeModal();
+			}
+		}}
+		onkeydown={(event) => {
 			if (event.key === 'Escape') {
 				closeModal();
 			}
@@ -104,7 +113,10 @@ const inputClasses =
 	>
 		<form
 			class="ui-surface-base ui-border-soft ui-shadow-elevated w-full max-w-3xl rounded-2xl border p-6 sm:p-8"
-			on:submit|preventDefault={handleSubmit}
+			onsubmit={(event) => {
+				event.preventDefault();
+				handleSubmit();
+			}}
 		>
 			<div class="flex items-start justify-between gap-4">
 				<div>
@@ -115,7 +127,7 @@ const inputClasses =
 						{$t('equipments.actions.addDescription')}
 					</p>
 				</div>
-				<button type="button" class="ui-icon-button" on:click={closeModal} aria-label={$t('equipments.form.cancel')}>
+				<button type="button" class="ui-icon-button" onclick={closeModal} aria-label={$t('equipments.form.cancel')}>
 					<X size={18} />
 				</button>
 			</div>
@@ -127,7 +139,7 @@ const inputClasses =
 						<button
 							type="button"
 							class={`ui-selectable-card ${form.type === 'drone' ? 'is-active' : ''}`}
-							on:click={() => (form.type = 'drone')}
+							onclick={() => (form.type = 'drone')}
 							aria-pressed={form.type === 'drone'}
 						>
 							<Plane size={18} />
@@ -136,7 +148,7 @@ const inputClasses =
 						<button
 							type="button"
 							class={`ui-selectable-card ${form.type === 'camera' ? 'is-active' : ''}`}
-							on:click={() => (form.type = 'camera')}
+							onclick={() => (form.type = 'camera')}
 							aria-pressed={form.type === 'camera'}
 						>
 							<Camera size={18} />
@@ -281,7 +293,7 @@ const inputClasses =
 			</div>
 
 			<div class="mt-8 flex justify-end gap-3">
-				<button type="button" class="ui-secondary-button" on:click={closeModal}>
+				<button type="button" class="ui-secondary-button" onclick={closeModal}>
 					{$t('equipments.form.cancel')}
 				</button>
 				<button type="submit" class="ui-primary-button px-5">

@@ -16,7 +16,7 @@ const fr = {
 		copyright: '(c) 2024 GAIA. Tous droits réservés.'
 	},
 	dashboard: {
-		title: 'Tableau opérationnel',
+		title: 'Tableau de bord',
 		overview: 'Vue parcellaire',
 		totalUsers: 'Exploitants connectés',
 		fireDetected: 'Alertes incendie (24h)',

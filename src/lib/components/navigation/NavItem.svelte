@@ -1,8 +1,13 @@
 <script lang="ts">
-	export let href: string;
-	export let label: string;
-	export let active = false;
-	export let align: 'default' | 'end' = 'default';
+	interface Props {
+		href: string;
+		label: string;
+		active?: boolean;
+		align?: 'default' | 'end';
+		children?: import('svelte').Snippet;
+	}
+
+	const { href, label, active = false, align = 'default', children }: Props = $props();
 </script>
 
 <li
@@ -15,7 +20,9 @@
 		aria-current={active ? 'page' : undefined}
 		aria-label={label}
 	>
-		<slot />
+		{#if children}
+			{@render children()}
+		{/if}
 	</a>
 	{#if active}
 		<span class="sr-only">{label}</span>

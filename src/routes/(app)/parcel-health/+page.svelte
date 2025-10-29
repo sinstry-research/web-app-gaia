@@ -2,18 +2,23 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import type { Map as LeafletMap } from 'leaflet';
-	import * as L from 'leaflet';
-	import 'leaflet/dist/leaflet.css';
+	import type * as LeafletNamespace from 'leaflet';
 	import { t } from '$lib/i18n';
 	import { logger } from '$lib/utils/logger';
-	import { NetworkError, handleError } from '$lib/utils/error-handler';
+	import { handleError } from '$lib/utils/error-handler';
+	import { mapStore } from '$lib/stores/map';
+	import { get } from 'svelte/store';
 
 	type LegendItem = { key: 'canopy' | 'moderate' | 'low' | 'alert'; color: string };
 	type MetricKey = 'coverage' | 'vigor' | 'stress' | 'update';
 
-	let mapContainer: HTMLDivElement | null = null;
-	let mapInstance: LeafletMap | null = null;
-	let userLocation: [number, number] | null = null;
+	let mapContainer = $state<HTMLDivElement | null>(null);
+	let userLocation = $state<[number, number] | null>(null);
+	let isLoading = $state(false);
+	
+	let mapState = $derived(get(mapStore));
+	let L = $derived(mapState.leafletLibrary);
+	let mapInstance = $derived(mapState.mapInstance);
 
 	const legendBase: LegendItem[] = [
 		{ key: 'canopy', color: '#111827' },
@@ -29,77 +34,167 @@
 		{ key: 'update', value: '—' }
 	];
 
-	$: legendItems = legendBase.map((item) => ({
+	const legendItems = $derived(legendBase.map((item) => ({
 		...item,
 		label: $t(`parcelHealth.legend.${item.key}`)
-	}));
+	})));
 
-	$: placeholderMetrics = metricBase.map((item) => ({
+	const placeholderMetrics = $derived(metricBase.map((item) => ({
 		key: item.key,
 		value: item.value,
 		label: $t(`parcelHealth.metrics.${item.key}.label`),
 		caption: $t(`parcelHealth.metrics.${item.key}.caption`)
-	}));
+	})));
 
-	onMount(() => {
-		if (!browser || !mapContainer) return;
+	const loadLeaflet = async (): Promise<void> => {
+		const currentState = get(mapStore);
+		if (currentState.isLoaded && currentState.leafletLibrary) {
+			return;
+		}
+
+		isLoading = true;
+		try {
+			const [leafletModule] = await Promise.all([
+				import('leaflet'),
+				import('leaflet/dist/leaflet.css')
+			]);
+			mapStore.setLeafletLibrary(leafletModule);
+		} catch (error) {
+			logger.error('Failed to load Leaflet', error);
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	const initializeMap = (leafletLib: typeof LeafletNamespace, container: HTMLDivElement): void => {
+		if (!browser || !container) return;
+
+		const currentState = get(mapStore);
+		
+		let center: [number, number] = [48.8566, 2.3522];
+		let zoom = 13;
+		
+		if (currentState.mapInstance) {
+			try {
+				const existingMap = currentState.mapInstance;
+				const mapCenter = existingMap.getCenter();
+				center = [mapCenter.lat, mapCenter.lng];
+				zoom = existingMap.getZoom();
+				existingMap.remove();
+				mapStore.setMapInstance(null);
+			} catch (error) {
+				logger.warn('Failed to preserve map state, using defaults', error);
+			}
+		}
 
 		try {
-			const iconOptions: L.IconOptions = {
+			const iconOptions = {
 				iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
 				iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
 				shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
 			};
-			const DefaultIcon = L.icon(iconOptions);
-			L.Marker.prototype.options.icon = DefaultIcon;
+			const DefaultIcon = leafletLib.icon(iconOptions);
+			leafletLib.Marker.prototype.options.icon = DefaultIcon;
 
-			mapInstance = L.map(mapContainer).setView([48.8566, 2.3522], 13);
+			const newMapInstance = leafletLib.map(container).setView(center, zoom);
 
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			leafletLib.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution:
 					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 				maxZoom: 19
-			}).addTo(mapInstance);
+			}).addTo(newMapInstance);
 
-			if (navigator.geolocation) {
+			mapStore.setMapInstance(newMapInstance);
+			mapStore.setContainer(container);
+
+			const storeState = get(mapStore);
+			if (storeState.userLocation) {
+				try {
+					newMapInstance.setView(storeState.userLocation, 16);
+					const marker = leafletLib.marker(storeState.userLocation).addTo(newMapInstance);
+					leafletLib.circle(storeState.userLocation, { radius: 50 }).addTo(newMapInstance);
+					marker.bindPopup('Vous êtes ici').openPopup();
+				} catch (error) {
+					logger.warn('Failed to restore user location on map', error);
+				}
+			} else if (navigator.geolocation && !storeState.geolocationRequested) {
+				mapStore.setGeolocationRequested(true);
 				navigator.geolocation.getCurrentPosition(
 					(position: GeolocationPosition) => {
+						const currentStoreState = get(mapStore);
+						if (!currentStoreState.mapInstance || !currentStoreState.leafletLibrary) return;
+						
 						const lat = position.coords.latitude;
 						const lng = position.coords.longitude;
-						userLocation = [lat, lng];
+						const location: [number, number] = [lat, lng];
+						
+						userLocation = location;
+						mapStore.setUserLocation(location);
 
-						if (mapInstance) {
-							mapInstance.setView([lat, lng], 16);
+						currentStoreState.mapInstance.setView(location, 16);
 
-							const marker = L.marker([lat, lng]).addTo(mapInstance);
-							const radius = position.coords.accuracy;
-							L.circle([lat, lng], { radius }).addTo(mapInstance);
+						const marker = currentStoreState.leafletLibrary.marker(location).addTo(currentStoreState.mapInstance);
+						const radius = position.coords.accuracy;
+						currentStoreState.leafletLibrary.circle(location, { radius }).addTo(currentStoreState.mapInstance);
 
-							marker
-								.bindPopup('Vous êtes ici')
-								.openPopup();
-						}
+						marker
+							.bindPopup('Vous êtes ici')
+							.openPopup();
 					},
 					(error: GeolocationPositionError) => {
 						const appError = handleError(error);
 						logger.warn('Error getting location', appError);
-						if (mapInstance && userLocation) {
-							mapInstance.setView(userLocation, 16);
+						const currentMap = get(mapStore).mapInstance;
+						const storedLocation = get(mapStore).userLocation;
+						if (currentMap && storedLocation) {
+							currentMap.setView(storedLocation, 16);
 						}
 					}
 				);
 			}
+
+			setTimeout(() => {
+				try {
+					newMapInstance.invalidateSize();
+				} catch (error) {
+					logger.warn('Failed to invalidate map size after init', error);
+				}
+			}, 100);
 		} catch (error) {
 			const appError = handleError(error);
 			logger.error('Error initializing map', appError);
 		}
+	};
 
-		return () => {
-			if (mapInstance) {
-				mapInstance.remove();
-				mapInstance = null;
+	onMount(() => {
+		if (!browser) return;
+
+		loadLeaflet().then(() => {
+			const currentState = get(mapStore);
+			if (!currentState.leafletLibrary || !mapContainer) return;
+			
+			initializeMap(currentState.leafletLibrary, mapContainer);
+		});
+	});
+
+	$effect(() => {
+		if (mapContainer) {
+			const currentState = get(mapStore);
+			if (currentState.mapInstance && currentState.leafletLibrary && mapContainer !== currentState.container) {
+				initializeMap(currentState.leafletLibrary, mapContainer);
+			} else if (currentState.mapInstance && currentState.container && mapContainer === currentState.container) {
+				setTimeout(() => {
+					const map = get(mapStore).mapInstance;
+					if (map) {
+						try {
+							map.invalidateSize();
+						} catch (error) {
+							logger.warn('Failed to invalidate map size in effect', error);
+						}
+					}
+				}, 50);
 			}
-		};
+		}
 	});
 </script>
 
@@ -122,14 +217,23 @@
 		</div>
 
 		<div class="mt-6 grid gap-6 lg:grid-cols-[2fr,1fr]">
-			<div class="relative overflow-hidden rounded-2xl border ui-border-subtle bg-white">
+		<div class="relative overflow-hidden rounded-2xl border ui-border-subtle bg-white">
+			{#if isLoading}
+				<div class="flex h-[420px] items-center justify-center ui-text-subtle">
+					<div class="text-center">
+						<div class="ui-loading-spinner mx-auto mb-4"></div>
+						<p class="text-sm">Loading map...</p>
+					</div>
+				</div>
+			{:else}
 				<div
 					bind:this={mapContainer}
 					class="h-[420px] w-full rounded-2xl"
 					style="z-index: 0;"
 				>
 				</div>
-			</div>
+			{/if}
+		</div>
 
 			<div class="space-y-4">
 				<div class="ui-card p-5">

@@ -2,8 +2,8 @@
 	import { Plus } from 'lucide-svelte';
 
 	import EquipmentFilters from '$lib/components/equipments/EquipmentFilters.svelte';
-	import EquipmentFormModal from '$lib/components/equipments/EquipmentFormModal.svelte';
 	import EquipmentList from '$lib/components/equipments/EquipmentList.svelte';
+	import EquipmentFormModal from '$lib/components/equipments/EquipmentFormModal.svelte';
 	import { initialEquipments } from '$lib/domain/equipments/data';
 	import { createEquipmentFromForm, getDefaultForm } from '$lib/domain/equipments/utils';
 	import type { Equipment, EquipmentForm, FilterKey } from '$lib/domain/equipments/types';
@@ -13,21 +13,23 @@
 	import { logger } from '$lib/utils/logger';
 	import { ValidationError } from '$lib/utils/error-handler';
 
-	let equipments: Equipment[] = [...initialEquipments];
-	let activeFilter: FilterKey = 'all';
-	let modalOpen = false;
-	let draftForm: EquipmentForm = getDefaultForm();
+	let equipments = $state<Equipment[]>([...initialEquipments]);
+	let activeFilter = $state<FilterKey>('all');
+	let modalOpen = $state(false);
+	let draftForm = $state<EquipmentForm>(getDefaultForm());
 
-	$: filteredEquipments =
-		activeFilter === 'all' ? equipments : equipments.filter((item) => item.type === activeFilter);
-
-	$: filterCounts = {
+	const filterCounts = $derived({
 		all: equipments.length,
 		drone: equipments.filter((item) => item.type === 'drone').length,
 		camera: equipments.filter((item) => item.type === 'camera').length
-	};
+	});
 
-	$: locale = $currentLocale;
+	const memoizedFilteredEquipments = $derived.by(() => {
+		if (activeFilter === 'all') return equipments;
+		return equipments.filter((item) => item.type === activeFilter);
+	});
+
+	const locale = $derived($currentLocale);
 
 	const openForm = () => {
 		draftForm = getDefaultForm();
@@ -38,11 +40,11 @@
 		modalOpen = false;
 	};
 
-	const handleFilterChange = (event: CustomEvent<EquipmentFiltersEvents['select']>) => {
+	const handleFilterChange = (event: CustomEvent<FilterKey>) => {
 		activeFilter = event.detail;
 	};
 
-	const handleSubmit = (event: CustomEvent<EquipmentFormModalEvents['submit']>) => {
+	const handleSubmit = (event: CustomEvent<EquipmentForm>) => {
 		try {
 			const newEquipment = createEquipmentFromForm(event.detail);
 			equipments = [newEquipment, ...equipments];
@@ -75,7 +77,7 @@
 				{$t('equipments.actions.addDescription')}
 			</p>
 		</div>
-		<button class="ui-primary-button" on:click={openForm}>
+		<button class="ui-primary-button" onclick={openForm}>
 			<Plus size={18} />
 			<span>{$t('equipments.actions.add')}</span>
 		</button>
@@ -89,13 +91,15 @@
 			<EquipmentFilters active={activeFilter} counts={filterCounts} on:select={handleFilterChange} />
 		</div>
 
-		<EquipmentList equipments={filteredEquipments} filter={activeFilter} {locale} />
+		<EquipmentList equipments={memoizedFilteredEquipments} filter={activeFilter} {locale} />
 	</section>
 </div>
 
-<EquipmentFormModal
-	open={modalOpen}
-	initialForm={draftForm}
-	on:close={closeForm}
-	on:submit={handleSubmit}
-/>
+	{#if modalOpen}
+		<EquipmentFormModal
+			open={modalOpen}
+			initialForm={draftForm}
+			on:close={closeForm}
+			on:submit={handleSubmit}
+		/>
+	{/if}

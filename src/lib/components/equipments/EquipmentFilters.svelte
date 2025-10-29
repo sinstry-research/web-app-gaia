@@ -1,26 +1,29 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-
 	import type { FilterKey } from '$lib/domain/equipments/types';
 	import { t } from '$lib/i18n';
 	import type { EquipmentFiltersEvents } from './events';
 
-export let active: FilterKey = 'all';
-export let counts: Record<FilterKey, number> = { all: 0, drone: 0, camera: 0 };
+	interface Props {
+		active?: FilterKey;
+		counts?: Record<FilterKey, number>;
+	}
 
-const dispatch = createEventDispatcher<EquipmentFiltersEvents>();
+	const { active = 'all', counts = { all: 0, drone: 0, camera: 0 } }: Props = $props();
 
-const handleSelect = (key: FilterKey) => {
-	dispatch('select', key);
-};
+	const dispatch = createEventDispatcher<EquipmentFiltersEvents>();
 
-type FilterOption = { key: FilterKey; label: string };
+	const handleSelect = (key: FilterKey) => {
+		dispatch('select', key);
+	};
 
-$: options = [
-	{ key: 'all', label: $t('equipments.filters.all') },
-	{ key: 'drone', label: $t('equipments.filters.drones') },
-	{ key: 'camera', label: $t('equipments.filters.cameras') }
-] satisfies FilterOption[];
+	type FilterOption = { key: FilterKey; label: string };
+
+	const options = $derived([
+		{ key: 'all', label: $t('equipments.filters.all') },
+		{ key: 'drone', label: $t('equipments.filters.drones') },
+		{ key: 'camera', label: $t('equipments.filters.cameras') }
+	] satisfies FilterOption[]);
 </script>
 
 <div class="flex flex-wrap gap-2">
@@ -29,7 +32,7 @@ $: options = [
 			type="button"
 			class="equipment-filter"
 			class:is-active={active === option.key}
-			on:click={() => handleSelect(option.key)}
+			onclick={() => handleSelect(option.key)}
 			aria-pressed={active === option.key}
 		>
 			<span>{option.label}</span>

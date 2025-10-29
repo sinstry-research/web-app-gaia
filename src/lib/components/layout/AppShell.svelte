@@ -17,7 +17,6 @@
 	let touchStartY = 0;
 	let touchStartTime = 0;
 	let trackingSwipe = false;
-	let currentRouteKey: RouteKey = '/';
 
 	type RouteKey = (typeof navOrder)[number];
 

@@ -19,7 +19,7 @@
 		"@eslint/js": "^9.18.0",
 		"@sveltejs/adapter-auto": "^6.0.0",
 		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.22.0",
+		"@sveltejs/kit": "^2.48.3",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/forms": "^0.5.10",
 		"@tailwindcss/typography": "^0.5.16",
@@ -49,5 +49,8 @@
 		"leaflet": "^1.9.4",
 		"lucide-svelte": "^0.525.0",
 		"zod": "^4.1.12"
+	},
+	"overrides": {
+		"cookie": "^0.7.2"
 	}
 }

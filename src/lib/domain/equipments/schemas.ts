@@ -46,11 +46,7 @@ export const equipmentFormSchema = z
 		}
 	);
 
-export const equipmentSchema: z.ZodType<
-	import('./types').Equipment,
-	z.ZodTypeDef,
-	unknown
-> = z.discriminatedUnion('type', [
+export const equipmentSchema = z.discriminatedUnion('type', [
 	z.object({
 		id: z.string().min(1),
 		identifier: z.string().min(1),
