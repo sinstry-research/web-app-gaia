@@ -1,6 +1,9 @@
 import { getTranslation } from '$lib/i18n';
 
 import type { BaseEquipment, Equipment, EquipmentForm } from './types';
+import { equipmentFormSchema } from './schemas';
+import { ValidationError } from '$lib/utils/error-handler';
+import { logger } from '$lib/utils/logger';
 
 export const todayIso = () => new Date().toISOString().slice(0, 10);
 
@@ -21,6 +24,17 @@ export const getDefaultForm = (): EquipmentForm => ({
 });
 
 export const createEquipmentFromForm = (form: EquipmentForm): Equipment => {
+	try {
+		equipmentFormSchema.parse(form);
+	} catch (error) {
+		const validationError = new ValidationError(
+			`Invalid equipment form data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			error
+		);
+		logger.error('Invalid equipment form', validationError);
+		throw validationError;
+	}
+
 	const base: BaseEquipment = {
 		id: form.identifier.trim(),
 		identifier: form.identifier.trim(),

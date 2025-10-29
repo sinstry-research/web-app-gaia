@@ -112,7 +112,19 @@
 					class="flex h-full w-full flex-row items-center gap-x-2 px-2 md:flex-col md:items-stretch md:gap-x-0 md:gap-y-2 md:px-0 md:py-2"
 				>
 					<NavItem href="/" label={$t('common.home')} active={currentRouteKey === '/'}>
-						<img src="/icon-black.svg" alt={$t('common.home')} class="h-6 w-6 flex-shrink-0" />
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 48 48"
+							class="h-6 w-6 flex-shrink-0"
+							aria-label={$t('common.home')}
+						>
+							<g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+								<path d="M24 44c11.046 0 20-8.954 20-20S35.046 4 24 4S4 12.954 4 24s8.954 20 20 20Z" />
+								<path stroke-linecap="round" d="M24 36c6.627 0 12-5.373 12-12" />
+							</g>
+						</svg>
 					</NavItem>
 					<NavItem
 						href="/parcel-health"
@@ -122,7 +134,16 @@
 						<MapIcon class="h-6 w-6 flex-shrink-0" />
 					</NavItem>
 					<NavItem href="/equipments" label={$t('common.equipments')} active={currentRouteKey === '/equipments'}>
-						<img src="/equipment.svg" alt={$t('common.equipments')} class="h-6 w-6 flex-shrink-0" />
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							class="h-6 w-6 flex-shrink-0"
+							aria-label={$t('common.equipments')}
+						>
+							<path fill="currentColor" d="m21.71 20.29l-1.42 1.42a1 1 0 0 1-1.41 0L7 9.85A3.8 3.8 0 0 1 6 10a4 4 0 0 1-3.78-5.3l2.54 2.54l.53-.53l1.42-1.42l.53-.53L4.7 2.22A4 4 0 0 1 10 6a3.8 3.8 0 0 1-.15 1l11.86 11.88a1 1 0 0 1 0 1.41M2.29 18.88a1 1 0 0 0 0 1.41l1.42 1.42a1 1 0 0 0 1.41 0l5.47-5.46l-2.83-2.83M20 2l-4 2v2l-2.17 2.17l2 2L18 8h2l2-4Z" />
+						</svg>
 					</NavItem>
 					<NavItem href="/settings" align="end" label={$t('common.settings')} active={currentRouteKey === '/settings'}>
 						{#if $user?.photoURL}

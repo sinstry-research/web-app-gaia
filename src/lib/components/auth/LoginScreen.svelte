@@ -3,6 +3,7 @@
 
 	import { signInWithGoogle, loading, error } from '$lib/stores/auth';
 	import { t } from '$lib/i18n';
+	import { logger } from '$lib/utils/logger';
 
 	let isSigningIn = false;
 
@@ -12,7 +13,7 @@
 		try {
 			await signInWithGoogle();
 		} catch (err) {
-			console.error('Sign in failed:', err);
+			logger.error('Sign in failed in UI', err);
 		} finally {
 			isSigningIn = false;
 		}

@@ -11,11 +11,13 @@
 	import type { EquipmentForm } from '$lib/domain/equipments/types';
 	import { getDefaultForm } from '$lib/domain/equipments/utils';
 	import { t } from '$lib/i18n';
+	import { equipmentFormSchema } from '$lib/domain/equipments/schemas';
+	import { ValidationError } from '$lib/utils/error-handler';
+	import { logger } from '$lib/utils/logger';
+	import type { EquipmentFormModalEvents } from './events';
+	import { ZodError } from 'zod';
 
-	const dispatch = createEventDispatcher<{
-		close: void;
-		submit: EquipmentForm;
-	}>();
+	const dispatch = createEventDispatcher<EquipmentFormModalEvents>();
 
 export let open = false;
 export let initialForm: EquipmentForm = getDefaultForm();
@@ -45,25 +47,44 @@ const inputClasses =
 		dispatch('close');
 	};
 
-	const validate = () => {
-		const hasBasics =
-			form.name.trim().length > 0 && form.identifier.trim().length > 0 && form.location.trim().length > 0;
-
-		if (!hasBasics) {
-			errorMessage = $t('equipments.form.validation');
+	const validate = (): boolean => {
+		try {
+			equipmentFormSchema.parse(form);
+			errorMessage = '';
+			return true;
+		} catch (error) {
+			if (error instanceof ZodError) {
+				const firstIssue = error.issues[0];
+				if (firstIssue) {
+					const fieldName = firstIssue.path.join('.');
+					errorMessage = `${$t('equipments.form.validation')}: ${fieldName} - ${firstIssue.message}`;
+				} else {
+					errorMessage = $t('equipments.form.validation');
+				}
+			} else {
+				const validationError = new ValidationError(
+					error instanceof Error ? error.message : 'Validation failed',
+					error
+				);
+				logger.error('Form validation failed', validationError);
+				errorMessage = $t('equipments.form.validation');
+			}
 			return false;
 		}
-
-		errorMessage = '';
-		return true;
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = (): void => {
 		if (!validate()) {
 			return;
 		}
 
-		dispatch('submit', { ...form });
+		try {
+			const validatedForm = equipmentFormSchema.parse(form);
+			dispatch('submit', validatedForm);
+		} catch (error) {
+			logger.error('Failed to validate form on submit', error);
+			errorMessage = $t('equipments.form.validation');
+		}
 	};
 </script>
 

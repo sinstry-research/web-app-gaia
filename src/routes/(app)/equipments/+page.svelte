@@ -8,6 +8,10 @@
 	import { createEquipmentFromForm, getDefaultForm } from '$lib/domain/equipments/utils';
 	import type { Equipment, EquipmentForm, FilterKey } from '$lib/domain/equipments/types';
 	import { currentLocale, t } from '$lib/i18n';
+	import type { EquipmentFormModalEvents } from '$lib/components/equipments/events';
+	import type { EquipmentFiltersEvents } from '$lib/components/equipments/events';
+	import { logger } from '$lib/utils/logger';
+	import { ValidationError } from '$lib/utils/error-handler';
 
 	let equipments: Equipment[] = [...initialEquipments];
 	let activeFilter: FilterKey = 'all';
@@ -34,17 +38,24 @@
 		modalOpen = false;
 	};
 
-	const handleFilterChange = (event: CustomEvent<FilterKey>) => {
+	const handleFilterChange = (event: CustomEvent<EquipmentFiltersEvents['select']>) => {
 		activeFilter = event.detail;
 	};
 
-	const handleSubmit = (event: CustomEvent<EquipmentForm>) => {
-		const newEquipment = createEquipmentFromForm(event.detail);
-		equipments = [newEquipment, ...equipments];
-		if (activeFilter !== 'all' && activeFilter !== newEquipment.type) {
-			activeFilter = 'all';
+	const handleSubmit = (event: CustomEvent<EquipmentFormModalEvents['submit']>) => {
+		try {
+			const newEquipment = createEquipmentFromForm(event.detail);
+			equipments = [newEquipment, ...equipments];
+			if (activeFilter !== 'all' && activeFilter !== newEquipment.type) {
+				activeFilter = 'all';
+			}
+			closeForm();
+		} catch (error) {
+			logger.error('Failed to create equipment from form', error);
+			if (error instanceof ValidationError) {
+				logger.error('Validation error when creating equipment', error);
+			}
 		}
-		closeForm();
 	};
 </script>
 

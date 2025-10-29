@@ -115,7 +115,7 @@ const en = {
 		themeDark: 'Dark'
 	},
 	parcelHealth: {
-		title: 'Parcel health map',
+		title: 'Health map',
 		subtitle: 'Live vegetation insights and stress monitoring will appear here soon.',
 		placeholderTag: 'Preview mode',
 		mapPlaceholder: {
@@ -150,6 +150,40 @@ const en = {
 				label: 'Last update',
 				caption: 'Sync once data is connected'
 			}
+		}
+	},
+	errors: {
+		generic: {
+			title: 'Something went wrong',
+			description: 'An unexpected error occurred. Please try again later.'
+		},
+		notFound: {
+			title: 'Page not found',
+			description: 'The page you are looking for does not exist or has been moved.'
+		},
+		forbidden: {
+			title: 'Access denied',
+			description: 'You do not have permission to access this resource.'
+		},
+		server: {
+			title: 'Server error',
+			description: 'The server encountered an error. Please try again later.'
+		},
+		statusCode: 'Status code',
+		details: {
+			title: 'Error details',
+			code: 'Code',
+			message: 'Message',
+			id: 'Error ID',
+			path: 'Path'
+		},
+		actions: {
+			goHome: 'Go home',
+			goBack: 'Go back',
+			reload: 'Reload page'
+		},
+		help: {
+			text: 'If this problem persists, please contact support with the error ID below:'
 		}
 	}
 } as const;

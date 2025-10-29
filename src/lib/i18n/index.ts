@@ -5,6 +5,7 @@ import en from './locales/en';
 import fr from './locales/fr';
 import type { NestedKeyOf } from './types';
 import { languageOptions } from './languages';
+import { storage } from '$lib/utils/storage';
 
 const dictionaries = {
 	en,
@@ -24,13 +25,13 @@ const createLocaleStore = () => {
 	const store = writable<Locale>('en');
 
 	if (browser) {
-		const storedLocale = localStorage.getItem(STORAGE_KEY);
-		if (isValidLocale(storedLocale)) {
+		const storedLocale = storage.get<string>(STORAGE_KEY);
+		if (storedLocale && isValidLocale(storedLocale)) {
 			store.set(storedLocale);
 		}
 
 		store.subscribe((value) => {
-			localStorage.setItem(STORAGE_KEY, value);
+			storage.set(STORAGE_KEY, value);
 		});
 	}
 

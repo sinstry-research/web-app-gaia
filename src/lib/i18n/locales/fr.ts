@@ -115,7 +115,7 @@ const fr = {
 		themeDark: 'Sombre'
 	},
 	parcelHealth: {
-		title: 'Carte de sante parcellaire',
+		title: 'Carte de santé',
 		subtitle: 'Les donnees de vigueur et de stress apparaitront ici prochainement.',
 		placeholderTag: 'Mode demonstration',
 		mapPlaceholder: {
@@ -150,6 +150,40 @@ const fr = {
 				label: 'Derniere mise a jour',
 				caption: 'Synchronisation active lorsque les donnees seront liees'
 			}
+		}
+	},
+	errors: {
+		generic: {
+			title: 'Une erreur est survenue',
+			description: 'Une erreur inattendue s\'est produite. Veuillez réessayer plus tard.'
+		},
+		notFound: {
+			title: 'Page non trouvée',
+			description: 'La page que vous recherchez n\'existe pas ou a été déplacée.'
+		},
+		forbidden: {
+			title: 'Accès refusé',
+			description: 'Vous n\'avez pas la permission d\'accéder à cette ressource.'
+		},
+		server: {
+			title: 'Erreur serveur',
+			description: 'Le serveur a rencontré une erreur. Veuillez réessayer plus tard.'
+		},
+		statusCode: 'Code de statut',
+		details: {
+			title: 'Détails de l\'erreur',
+			code: 'Code',
+			message: 'Message',
+			id: 'ID d\'erreur',
+			path: 'Chemin'
+		},
+		actions: {
+			goHome: 'Retour à l\'accueil',
+			goBack: 'Retour',
+			reload: 'Recharger la page'
+		},
+		help: {
+			text: 'Si ce problème persiste, veuillez contacter le support avec l\'ID d\'erreur ci-dessous :'
 		}
 	}
 } as const;

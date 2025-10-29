@@ -3,6 +3,8 @@ import { browser } from '$app/environment';
 import { onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth';
 
 import { auth, googleProvider } from '$lib/services/firebase';
+import { logger } from '$lib/utils/logger';
+import { AuthenticationError, handleError } from '$lib/utils/error-handler';
 
 type AuthStatus = 'loading' | 'ready';
 
@@ -19,8 +21,9 @@ if (browser) {
 			errorStore.set(null);
 		},
 		(error) => {
-			console.error('Auth listener error:', error);
-			errorStore.set(error.message);
+			const appError = handleError(error);
+			logger.error('Auth listener error', appError);
+			errorStore.set(appError.message);
 			statusStore.set('ready');
 		}
 	);
@@ -42,9 +45,14 @@ export const signInWithGoogle = async () => {
 		const result = await signInWithPopup(auth, googleProvider);
 		return result.user;
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'Unknown authentication error.';
-		errorStore.set(message);
-		throw err;
+		const appError = handleError(err);
+		if (appError instanceof AuthenticationError) {
+			logger.error('Authentication failed', appError);
+		} else {
+			logger.error('Sign in failed', appError);
+		}
+		errorStore.set(appError.message);
+		throw appError;
 	}
 };
 
@@ -52,8 +60,9 @@ export const signOutUser = async () => {
 	try {
 		await signOut(auth);
 	} catch (err) {
-		const message = err instanceof Error ? err.message : 'Unknown sign-out error.';
-		errorStore.set(message);
-		throw err;
+		const appError = handleError(err);
+		logger.error('Sign out failed', appError);
+		errorStore.set(appError.message);
+		throw appError;
 	}
 };

@@ -8,8 +8,6 @@
 		Navigation,
 		Plane,
 		Radio,
-		ShieldCheck,
-		Target,
 		Video,
 		Wind
 	} from 'lucide-svelte';
@@ -73,13 +71,6 @@
 							</span>
 						</div>
 						<div class="flex items-center gap-2">
-							<ShieldCheck class="text-emerald-500" size={18} />
-							<span>
-								{$t('equipments.details.health')}:
-								<span class="ml-1 font-medium ui-text-secondary">{equipment.health}%</span>
-							</span>
-						</div>
-						<div class="flex items-center gap-2">
 							<CalendarClock class="ui-text-muted" size={18} />
 							<span>
 								{$t('equipments.details.lastCheck')}:
@@ -117,13 +108,6 @@
 								<span>
 									{$t('equipments.speed')}:
 									<span class="ml-1 font-medium ui-text-secondary">{equipment.speed} km/h</span>
-								</span>
-							</div>
-							<div class="flex items-center gap-2">
-								<Target class="text-slate-500" size={18} />
-								<span>
-									{$t('equipments.form.mission')}:
-									<span class="ml-1 font-medium ui-text-secondary">{equipment.mission}</span>
 								</span>
 							</div>
 						{:else}

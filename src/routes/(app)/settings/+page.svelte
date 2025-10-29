@@ -7,6 +7,7 @@
 	import { languages, setLocale, currentLocale, t, type Locale } from '$lib/i18n';
 	import { theme, setTheme, type Theme } from '$lib/stores/theme';
 	import { signOutUser, user } from '$lib/stores/auth';
+	import { logger } from '$lib/utils/logger';
 
 	let selectedLanguage: Locale = 'en';
 	let selectedTheme: Theme = 'light';
@@ -32,7 +33,7 @@
 		try {
 			await signOutUser();
 		} catch (error) {
-			console.error('Sign out failed:', error);
+			logger.error('Sign out failed in UI', error);
 		}
 	};
 </script>
@@ -42,7 +43,9 @@
 </svelte:head>
 
 <div class="space-y-6">
-	<h1 class="text-3xl font-semibold ui-text-primary">{$t('settings.title')}</h1>
+	<header class="ui-surface-overlay ui-border-soft flex flex-col gap-3 rounded-2xl border p-6">
+		<h1 class="text-3xl font-semibold ui-text-primary">{$t('settings.title')}</h1>
+	</header>
 
 	<div class="ui-card p-6">
 		<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -80,7 +83,8 @@
 			</label>
 			<select
 				id="language"
-				class="mt-2 block w-full rounded-xl border ui-border-subtle px-3 py-2 text-sm ui-text-secondary focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300"
+				class="mt-2 block w-full rounded-xl border ui-border-subtle bg-[var(--ui-surface-subtle)] px-3 py-2 text-sm ui-text-primary focus:border-[var(--ui-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--ui-ring-focus)]"
+				style="background-color: var(--ui-surface-subtle); color: var(--ui-text-primary);"
 				bind:value={selectedLanguage}
 				on:change={(event) => handleLanguageChange((event.target as HTMLSelectElement).value as Locale)}
 			>
@@ -101,7 +105,7 @@
 					class={`ui-theme-card ${selectedTheme === 'light' ? 'is-active-light' : ''}`}
 					on:click={() => handleThemeChange('light')}
 				>
-					<Sun size={16} />
+					<Sun size={16} stroke="currentColor" />
 					<span>{$t('settings.themeLight')}</span>
 				</button>
 				<button
@@ -109,7 +113,7 @@
 					class={`ui-theme-card ${selectedTheme === 'dark' ? 'is-active-dark' : ''}`}
 					on:click={() => handleThemeChange('dark')}
 				>
-					<Moon size={16} />
+					<Moon size={16} stroke="currentColor" />
 					<span>{$t('settings.themeDark')}</span>
 				</button>
 			</div>
